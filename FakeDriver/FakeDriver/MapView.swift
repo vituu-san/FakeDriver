@@ -14,7 +14,7 @@ protocol MapViewRenderable: UIView {
     func centerMapOn(_ location: CLLocation?)
 }
 
-final class MapView: UIView, MapViewRenderable {
+final class MapView: UIView {
     private var mapView: MKMapView
     
     override init(frame: CGRect) {
@@ -29,6 +29,17 @@ final class MapView: UIView, MapViewRenderable {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        mapView.layer.cornerRadius = 10
+        mapView.layer.borderWidth = 2.0
+        mapView.layer.borderColor = UIColor.orange.cgColor
+        mapView.layer.masksToBounds = true
+        mapView.clipsToBounds = true
+    }
+}
+
+// MARK: - MapViewRenderable
+extension MapView: MapViewRenderable {
     func drawRoute(from source: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D) {
         let sourcePlacemark = MKPlacemark(coordinate: source)
         let destinationPlacemark = MKPlacemark(coordinate: destination)
@@ -68,6 +79,7 @@ final class MapView: UIView, MapViewRenderable {
     }
 }
 
+// MARK: - CodableView
 extension MapView: CodableView {
     func buildViewHierarchy() {
         addSubview(mapView)
@@ -91,7 +103,7 @@ extension MapView: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let polyline = overlay as? MKPolyline {
             let renderer = MKPolylineRenderer(polyline: polyline)
-            renderer.strokeColor = .red
+            renderer.strokeColor = .orange
             renderer.lineWidth = 6.0
             return renderer
         }

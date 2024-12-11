@@ -32,11 +32,11 @@ final class CustomTextField: UITextField {
     
     func configureLeftIcon() {
         let leftImageView = UIImageView(image: leftIcon)
-        leftImageView.tintColor = .gray
+        leftImageView.tintColor = .orange
         
         let verticalLine = UIView()
         verticalLine.translatesAutoresizingMaskIntoConstraints = false
-        verticalLine.backgroundColor = .gray
+        verticalLine.backgroundColor = .orange
         
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
