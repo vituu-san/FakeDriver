@@ -9,27 +9,35 @@ import UIKit
 import SnapKit
 
 final class FormsView: UIView {
-    private var userID: UITextField = {
+    weak var delegate: UITextFieldDelegate?
+    
+    private lazy var userID: UITextField = {
         let icon = UIImage(systemName: "person.fill")
         let textField = CustomTextField(leftIcon: icon ?? UIImage())
         textField.placeholder = "Digite o ID do usuário"
         textField.font = .systemFont(ofSize: 18)
+        textField.returnKeyType = .next
+        textField.delegate = self
         return textField
     }()
     
-    private var sourceAddress: UITextField = {
-        let icon = UIImage(systemName: "record.circle.fill")
+    private lazy var sourceAddress: UITextField = {
+        let icon = UIImage(named: "a")?.withTintColor(.orange, renderingMode: .alwaysTemplate)
         let textField = CustomTextField(leftIcon: icon ?? UIImage())
         textField.placeholder = "Digite o endereço de origem"
         textField.font = .systemFont(ofSize: 18)
+        textField.returnKeyType = .next
+        textField.delegate = self
         return textField
     }()
     
-    private var destinationAddress: UITextField = {
-        let icon = UIImage(systemName: "dot.square.fill")
+    private lazy var destinationAddress: UITextField = {
+        let icon = UIImage(named: "b")?.withTintColor(.orange, renderingMode: .alwaysTemplate)
         let textField = CustomTextField(leftIcon: icon ?? UIImage())
         textField.placeholder = "Digite o endereço de destino"
         textField.font = .systemFont(ofSize: 18)
+        textField.returnKeyType = .done
+        textField.delegate = self
         return textField
     }()
     
@@ -53,10 +61,11 @@ final class FormsView: UIView {
     }
     
     override func layoutSubviews() {
-        backView.layer.cornerRadius = 8.0
+        backView.layer.cornerRadius = 10
         backView.layer.borderWidth = 2.0
-        backView.layer.borderColor = UIColor.gray.cgColor
+        backView.layer.borderColor = UIColor.orange.cgColor
         backView.layer.masksToBounds = true
+        backView.clipsToBounds = true
     }
 }
 
@@ -68,16 +77,28 @@ extension FormsView: CodableView {
     
     func setupConstraints() {
         formsContainer.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(10)
+            $0.leading.equalToSuperview()
+            $0.top.bottom.trailing.equalToSuperview().inset(10)
         }
         
         backView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(10)
+            $0.edges.equalToSuperview()
         }
     }
     
     func setupAdditionalConfiguration() {
         translatesAutoresizingMaskIntoConstraints = false
         backView.backgroundColor = .white
+    }
+}
+
+extension FormsView: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        delegate?.textFieldShouldReturn?(textField) ?? false
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.endEditing(true)
     }
 }
