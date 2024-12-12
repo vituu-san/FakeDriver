@@ -36,11 +36,26 @@ final class MapView: UIView {
         mapView.layer.masksToBounds = true
         mapView.clipsToBounds = true
     }
+    
+    private func configurePointAnnotations(from source: CLLocationCoordinate2D,
+                                           to destination: CLLocationCoordinate2D) {
+        let startAnnotation = MKPointAnnotation()
+        startAnnotation.coordinate = source
+        startAnnotation.title = "Ponto A"
+        mapView.addAnnotation(startAnnotation)
+
+        let endAnnotation = MKPointAnnotation()
+        endAnnotation.coordinate = destination
+        endAnnotation.title = "Ponto B"
+        mapView.addAnnotation(endAnnotation)
+    }
 }
 
 // MARK: - MapViewRenderable
 extension MapView: MapViewRenderable {
     func drawRoute(from source: CLLocationCoordinate2D, to destination: CLLocationCoordinate2D) {
+        configurePointAnnotations(from: source, to: destination)
+        
         let sourcePlacemark = MKPlacemark(coordinate: source)
         let destinationPlacemark = MKPlacemark(coordinate: destination)
         
@@ -109,5 +124,31 @@ extension MapView: MKMapViewDelegate {
         }
         
         return MKOverlayRenderer(overlay: overlay)
+    }
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "customAnnotation")
+        if annotation.title == "Ponto A" {
+            annotationView.image = resizeImage(UIImage(named: "a")!,
+                                               targetSize: CGSize(width: 20, height: 20))
+        } else if annotation.title == "Ponto B" {
+            annotationView.image = resizeImage(UIImage(named: "b")!,
+                                               targetSize: CGSize(width: 20, height: 20))
+        }
+        return annotationView
+    }
+    
+    private func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
+        let size = image.size
+        let widthRatio = targetSize.width / size.width
+        let heightRatio = targetSize.height / size.height
+        let newSize = CGSize(width: size.width * widthRatio, height: size.height * heightRatio)
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        image.draw(in: CGRect(origin: .zero, size: newSize))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage ?? image
     }
 }

@@ -17,6 +17,14 @@ protocol OptionsTripViewDisplaying: UIView {
 final class OptionsTripView: UIView {
     private var mapView: MapView = MapView()
     
+    var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 170
+        tableView.register(DriversCell.self, forCellReuseIdentifier: "DriversCell")
+        return tableView
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -39,15 +47,21 @@ extension OptionsTripView: OptionsTripViewDisplaying {
     }
 }
 
+// MARK: - CodableView
 extension OptionsTripView: CodableView {
     func buildViewHierarchy() {
         addSubview(mapView)
+        addSubview(tableView)
     }
     
     func setupConstraints() {
         mapView.snp.makeConstraints {
             $0.height.equalTo(250)
             $0.leading.topMargin.trailing.equalToSuperview().inset(10)
+        }
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(mapView.snp.bottom).offset(10)
+            $0.leading.trailing.bottom.equalToSuperview().inset(10)
         }
     }
     

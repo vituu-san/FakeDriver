@@ -22,6 +22,8 @@ final class OptionsTripViewController: UIViewController {
         super.viewDidLoad()
         
         configureLocationServices()
+        optionsTripView.tableView.delegate = self
+        optionsTripView.tableView.dataSource = self
         
         // Simulação de uma rota com base em latitude e longitude:
         let sourceCoordinate = CLLocationCoordinate2D(latitude: -27.5521413, longitude: -48.6213535)
@@ -61,5 +63,26 @@ extension OptionsTripViewController: CLLocationManagerDelegate {
         }
         
         currentLocation = lastLocation
+    }
+}
+
+extension OptionsTripViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "DriversCell", for: indexPath) as? DriversCell {
+            cell.setup(name: "Homer Simpson",
+                       introduction: "Olá! Sou o Homer, seu motorista camarada! Relaxe e aproveite o passeio, com direito a rosquinhas e boas risadas (e talvez alguns desvios).",
+                       vehicle: "Plymouth Valiant 1973 rosa e enferrujado",
+                       rating: "2",
+                       value: "R$ 50.05")
+        }
+        return UITableViewCell()
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 170
     }
 }
